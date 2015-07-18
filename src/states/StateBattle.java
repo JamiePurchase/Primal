@@ -4,6 +4,9 @@ import app.Engine;
 import battle.Boost;
 import battle.BoostKrator;
 import battle.BoostTyde;
+import battle.Command;
+import battle.UnitAlly;
+import battle.UnitEnemy;
 import exceptions.StateUnmaintained;
 import gfx.Colour;
 import gfx.Drawing;
@@ -11,17 +14,47 @@ import gfx.Fonts;
 import gfx.Text;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class StateBattle extends State
 {
+    // Battle
+    private String battleState;
+    private long battleTime;
+    
+    // Units
+    private ArrayList<UnitAlly> unitAllies;
+    private ArrayList<UnitEnemy> unitEnemies;
+    
+    // Command Menu
+    private boolean commandActive;
+    private ArrayList<Command> commandOptions;
+    private int commandCursor;
+    
+    // Boost
     private boolean boostActive;
     private Boost boostObject;
     
     public StateBattle()
     {
-        System.out.println("STATE BATTLE");
-        //
+        // Battle
+        this.battleState = "INTRO";
+        this.battleTime = System.nanoTime();
+        
+        // Units
+        this.unitAllies = new ArrayList();
+        this.unitEnemies = new ArrayList();
+        
+        // Command Menu
+        this.commandNull();
+        
+        // Boost
         this.boostNull();
+        
+        // TEMP
+        this.unitAddAlly(new UnitAlly(this, "Krator", Drawing.getImage("characters/Krator/battle.png"), 1100, 150));
+        this.unitAddAlly(new UnitAlly(this, "Tyde", Drawing.getImage("characters/Tyde/battle.png"), 1100, 250));
+        this.unitAddEnemy(new UnitEnemy(this, "Kawker", Drawing.getImage("units/dino/kawker.png"), 100, 100));
     }
     
     private void boostCreate(Boost boost)
@@ -34,6 +67,13 @@ public class StateBattle extends State
     {
         this.boostActive = false;
         this.boostObject = null;
+    }
+    
+    private void commandNull()
+    {
+        this.commandActive = false;
+        this.commandOptions = new ArrayList();
+        this.commandCursor = 0;
     }
 
     public void inputKeyPress(String key)
@@ -91,21 +131,19 @@ public class StateBattle extends State
     
     public void render(Graphics g)
     {
-        //System.out.println("STATE BATTLE -> RENDER");
-        
         // Background
         g.setColor(Colour.getColour("GRASSLAND_1"));
         g.fillRect(0, 0, 1366, 768);
         
-        // Temp
-        g.drawImage(Drawing.getImage("characters/Krator/battle.png"), 1100, 150, null);
-        g.drawImage(Drawing.getImage("characters/Tyde/battle.png"), 1100, 250, null);
+        // Units
+        this.renderUnitAllies(g);
+        this.renderUnitEnemies(g);
         
         // Temp
         this.renderParty(g);
         
         // Temp
-        this.renderCommand(g);
+        if(this.commandActive) {this.renderCommand(g);}
         
         // Temp
         if(this.boostActive) {this.boostObject.render(g);}
@@ -115,27 +153,74 @@ public class StateBattle extends State
     {
         g.setColor(Colour.getColour("WHITE"));
         g.setFont(Fonts.getFont("STANDARD_ITALIC"));
-        g.drawString("commands", 50, 590);
+        g.drawString("commands", 50, 560);
         g.setFont(Fonts.getFont("STANDARD"));
-        g.drawString("ATTACK", 50, 625);
-        g.drawString("SKILLS", 50, 660);
+        g.drawString("ATTACK", 50, 605);
+        g.drawString("SKILLS", 50, 650);
         g.drawString("BERSERK", 50, 695);
-        g.drawString("ITEM", 50, 730);
+        g.drawString("ITEM", 50, 740);
     }
     
     private void renderParty(Graphics g)
     {
-        g.setColor(Colour.getColour("WHITE"));
+        // TEMP
+        g.setColor(Colour.getColour("BLACK"));
         g.setFont(Fonts.getFont("STANDARD"));
-        g.drawString("KRATOR", 970, 660);
-        g.drawString("TYDE", 970, 695);
-        g.drawString("??????", 970, 730);
-        g.drawString("134", 1150, 660);
-        g.drawString("102", 1150, 695);
-        g.drawString("???", 1150, 730);
-        g.drawString("64", 1250, 660);
-        g.drawString("128", 1250, 695);
-        g.drawString("???", 1250, 730);
+        Text.writeShadow(g, "KRATOR", 930, 650);
+        Text.writeShadow(g, "TYDE", 930, 695);
+        Text.writeShadow(g, "?????", 930, 740);
+        Text.writeShadow(g, "134", 1120, 650);
+        Text.writeShadow(g, "102", 1120, 695);
+        Text.writeShadow(g, "???", 1120, 740);
+        Text.writeShadow(g, "64", 1250, 650);
+        Text.writeShadow(g, "128", 1250, 695);
+        Text.writeShadow(g, "???", 1250, 740);
+        
+        // TEMP
+        g.setColor(Colour.getColour("DISPLAY_CHARGE"));
+        g.fillRect(930, 655, 150, 10);
+        g.fillRect(930, 700, 150, 10);
+        g.fillRect(930, 745, 150, 10);
+        g.setColor(Colour.getColour("BLACK"));
+        g.drawRect(930, 655, 150, 10);
+        g.drawRect(930, 700, 150, 10);
+        g.drawRect(930, 745, 150, 10);
+        
+        // TEMP
+        g.setColor(Colour.getColour("DISPLAY_HEALTH"));
+        g.fillRect(1120, 655, 100, 10);
+        g.fillRect(1120, 700, 100, 10);
+        g.fillRect(1120, 745, 100, 10);
+        g.setColor(Colour.getColour("BLACK"));
+        g.drawRect(1120, 655, 100, 10);
+        g.drawRect(1120, 700, 100, 10);
+        g.drawRect(1120, 745, 100, 10);
+        
+        // TEMP
+        g.setColor(Colour.getColour("DISPLAY_ENERGY"));
+        g.fillRect(1250, 655, 100, 10);
+        g.fillRect(1250, 700, 100, 10);
+        g.fillRect(1250, 745, 100, 10);
+        g.setColor(Colour.getColour("BLACK"));
+        g.drawRect(1250, 655, 100, 10);
+        g.drawRect(1250, 700, 100, 10);
+        g.drawRect(1250, 745, 100, 10);
+    }
+    
+    private void renderUnitAllies(Graphics g)
+    {
+        for(int x = 0; x < this.unitAllies.size(); x++)
+        {
+            this.unitAllies.get(x).render(g);
+        }
+    }
+    
+    private void renderUnitEnemies(Graphics g)
+    {
+        for(int x = 0; x < this.unitEnemies.size(); x++)
+        {
+            this.unitEnemies.get(x).render(g);
+        }
     }
 
     public void tick()
@@ -145,6 +230,16 @@ public class StateBattle extends State
             if(this.boostObject.getBoostDone()) {this.boostNull(); }
             else {this.boostObject.tick();}
         }
+    }
+    
+    public void unitAddAlly(UnitAlly ally)
+    {
+        this.unitAllies.add(ally);
+    }
+    
+    public void unitAddEnemy(UnitEnemy enemy)
+    {
+        this.unitEnemies.add(enemy);
     }
     
 }
