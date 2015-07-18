@@ -98,13 +98,29 @@ public class StateBattle extends State
         g.fillRect(0, 0, 1366, 768);
         
         // Temp
-        g.drawImage(Drawing.getImage("characters/krator/battle.png"), 1100, 150, null);
+        g.drawImage(Drawing.getImage("characters/Krator/battle.png"), 1100, 150, null);
+        g.drawImage(Drawing.getImage("characters/Tyde/battle.png"), 1100, 250, null);
         
         // Temp
         this.renderParty(g);
         
         // Temp
+        this.renderCommand(g);
+        
+        // Temp
         if(this.boostActive) {this.boostObject.render(g);}
+    }
+    
+    private void renderCommand(Graphics g)
+    {
+        g.setColor(Colour.getColour("WHITE"));
+        g.setFont(Fonts.getFont("STANDARD_ITALIC"));
+        g.drawString("commands", 50, 590);
+        g.setFont(Fonts.getFont("STANDARD"));
+        g.drawString("ATTACK", 50, 625);
+        g.drawString("SKILLS", 50, 660);
+        g.drawString("BERSERK", 50, 695);
+        g.drawString("ITEM", 50, 730);
     }
     
     private void renderParty(Graphics g)

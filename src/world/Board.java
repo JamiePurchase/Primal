@@ -28,7 +28,7 @@ public class Board
         this.boardScrollY = 0;
         
         // TEMP
-        this.player = new EntityCharacter(this, "Krator", 0, 0, "characters/krator/");
+        this.player = new EntityCharacter(this, "Krator", 0, 0, "characters/Krator/");
     }
     
     private void createTerrain(String terrain)

@@ -29,7 +29,7 @@ public class EntityCharacter extends Entity
         if(this.direction == "W") {getY = 1;}
         if(this.direction == "E") {getY = 2;}
         if(this.direction == "N") {getY = 3;}
-        return new Tileset("CHAR_KRATOR_1", Drawing.getImage("characters/krator/1.png"), 64, 64, 3, 4).getTileAt(getX, getY);
+        return new Tileset("CHAR_KRATOR_1", Drawing.getImage("characters/Krator/1.png"), 64, 64, 3, 4).getTileAt(getX, getY);
     }
     
     public void push(String direction)
@@ -47,7 +47,7 @@ public class EntityCharacter extends Entity
     public void render(Graphics g)
     {
         g.drawImage(this.getRenderImage(), this.getRenderX(), this.getRenderY(), null);
-        //g.drawImage(Drawing.getImage("characters/krator/1.png"), 0, 0, null);
+        //g.drawImage(Drawing.getImage("characters/Krator/1.png"), 0, 0, null);
     }
     
 }
